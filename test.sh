@@ -3,6 +3,7 @@
 set -e
 set -o pipefail
 
-gcc bkv_test.c bkv.c -o test
+rm -rf test || true
+gcc bkv_test.c bkv.c -o test -g
 ./test || true
 rm -rf test
