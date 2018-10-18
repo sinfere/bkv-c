@@ -3,20 +3,20 @@ Binary key-value tuples protocol, c implementation
 
 ## 1 Protocl
 bkv = kv + kv + kv + ...  
-kv = length + key + value  
+kv = length + key length + key + value  
 
 ## 1.1 Length
 `length = length(key + value), vary bytes`  
 Length byte uses first bit for stopping bit, indicating whether length ends, 0 stands for ending, 1 stands for continuing. 7 bits are used for actual value    
-For example, if length is small than 128, one byte is enough; if length is larger than 256, using multiple bytes, the first high bit of every byte is 1, the first high bit of last byte is 0.
+For example, if length is small than 128, one byte is enough; if length is larger than 128, using multiple bytes, the first high bit of every byte is 1, the first high bit of last byte is 0.
 ```
 2 -> 0x02
 666 -> 0x851A
 88888888 -> 0xAAB1AC38
 ```
 
-## 1.2 Key
-Key use 1 byte, the first bit stands for key type, 0 stands for number key, 1 stands for strings, thus max string key length is 128
+## 1.2 Key Length
+`Key length` use 1 byte, the first bit stands for key type, 0 stands for number key, 1 stands for strings, thus max string `key length` is 128
 
 # 2 Example
 Pack:
