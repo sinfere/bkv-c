@@ -59,12 +59,20 @@ void test_bkv_encode_decode() {
     bkv_add_by_number_key(tb, 1, &value[0], 2);
     bkv_add_by_string_key(tb, "version", &value[0], 2);
 
+    char* test = "hello";
+    bkv_add_by_string_key(tb, "test", (u_int8_t *)test, strlen(test));
+
     buffer* b = bkv_pack(tb);
 
     dump_buffer("pack result:", b);
     printf("\n");
 
     bkv_unpack_result* r = bkv_unpack(b->buf, b->size);
+    if (r->code == 0) {
+        char* test = bkv_get_string_value_from_string_key(r->bkv, "test");
+        u_int64_t version = bkv_get_number_value_from_string_key(r->bkv, "version");
+    }
+    
     printf("%-30s %d \n", "unpack result code:", r->code);
     printf("%-30s %ld \n\n", "unpack kv size:", r->bkv->size);
 
@@ -97,6 +105,14 @@ void test_bench_bkv_encode_decode() {
     }    
 }
 
+void test_encode_decode_length() {
+    buffer* b = encode_length(88888888);
+    dump_buffer("length", b);
+    decode_length_result *dr = decode_length(b->buf, b->size);
+    LOGI("%d", dr->code);
+    LOGI("%d", (int)dr->length);
+}
+
 
 int main() {
     printf("begin: %d\n\n",(int)time(NULL));
@@ -108,6 +124,8 @@ int main() {
     // test_bench_bkv_encode_decode();
     // test_ml_bkv_encode_decode();
     test_bkv_encode_decode();
+
+    // test_encode_decode_length();
 
     printf("end: %d\n",(int)time(NULL));
 

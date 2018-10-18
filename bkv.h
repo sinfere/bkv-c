@@ -1,11 +1,27 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "common.h"
 
+#if !defined(BKV_H)
+#define BKV_H
+
+buffer* encode_number(u_int64_t number);
+u_int64_t decode_number(u_int8_t * buf, size_t buf_size);
+
+buffer* encode_length(u_int64_t length);
 typedef struct {
-    u_int8_t* buf;
-    size_t size;
-} buffer;
+    int code;
+    u_int64_t length;
+    u_int64_t length_byte_size;
+} decode_length_result;
+decode_length_result* decode_length(u_int8_t * buf, size_t buf_size);
+
+
+#define KV_VALUE_TYPE_BKV      0
+#define KV_VALUE_TYPE_NUMBER   1
+#define KV_VALUE_TYPE_STRING   2
+#define KV_VALUE_TYPE_RAW      3
 
 typedef struct {
     int is_string_key;
@@ -68,6 +84,12 @@ bkv_unpack_result* bkv_unpack(u_int8_t* buf, size_t buf_size);
 void bkv_free(bkv* b);
 void bkv_free_unpack_result(bkv_unpack_result *r);
 
+kv* bkv_get_kv_from_string_key(bkv* b, char* key);
+kv* bkv_get_kv_from_number_key(bkv* b, u_int64_t key);
+
+u_int64_t bkv_get_number_value_from_string_key(bkv* b, char* key);
+char* bkv_get_string_value_from_string_key(bkv* b, char* key);
+
 
 
 
@@ -77,3 +99,6 @@ void bkv_free_unpack_result(bkv_unpack_result *r);
 void dump_buffer(char* name, buffer* b);
 void dump_kv(kv* t);
 void dump_bkv(bkv* b);
+
+
+#endif
