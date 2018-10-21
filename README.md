@@ -1,9 +1,11 @@
-# bkv-c
+# BKV
 Binary key-value tuples protocol, c implementation
 
 ## 1 Protocl
-bkv = kv + kv + kv + ...  
-kv = length + key length + key + value  
+`bkv = kv + kv + kv + ...`  
+`kv = length + [key length] + key + value`  
+`length = len(key length + key + value)`   
+`[key length] = len(key)`   
 
 ## 1.1 Length
 `length = length(key + value), vary bytes`  
@@ -17,6 +19,12 @@ For example, if length is small than 128, one byte is enough; if length is large
 
 ## 1.2 Key Length
 `Key length` use 1 byte, the first bit stands for key type, 0 stands for number key, 1 stands for strings, thus max string `key length` is 128
+
+## 1.3 Key
+Key is either string or number, BKV will use as less bytes to stands for number as possible, for example, if number is u_int64_t 3, it will be encoded to byte 0x03
+
+## 1.4 Value
+Value is just raw bytes, there is no type info for value, the parsing work is left for application level according to key. when we define a key, we should know the responding value bytes layout
 
 # 2 Example
 Pack:
