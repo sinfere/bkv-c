@@ -63,6 +63,22 @@ key[n]:               1 -> value[2]: 0203
 key[s]:         version -> value[2]: 0203
 key[s]:            test -> value[5]: 68656C6C6F (s: hello)
 ```
+Detail:
+```
+04010102030A8776657273696F6E02030A847465737468656C6C6F
+
+kv 1:
+0401010203
+  04[len] 01[key len] 01[key] 0203[value]
+
+kv 2:
+0A8776657273696F6E0203
+  0A[len] 87[key len: string flag + len 7] + 76657273696F6E[key:'version'] 0203[value]
+
+kv 3:
+0A847465737468656C6C6F
+  0A[len] 84[key len: string flag + len 4] + 74657374[key:'test'] 68656C6C6F[value:'hello']
+```
 
 ## 3 Why BKV
 - **small overhead**  
