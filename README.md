@@ -85,3 +85,5 @@ kv 3:
   normally, for each kv, there is only two bytes overhead, while json has 5 or more, and hard to parse; it's good for iot or rpc protocol
 - **light weight**  
   there is no nested object in bkv, bkv is just a list of kvs, so it's very easy to pack and unpack, so is implementation 
+- **more "reasonable"**
+  in RPC scenario, bkv can be used as function name + function params, it looks reasonably
