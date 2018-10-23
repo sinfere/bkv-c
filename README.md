@@ -81,6 +81,8 @@ kv 3:
 ```
 
 ## 3 Why BKV
+- **no need to parse custom frame for iot device any more**  
+  for every new device to integerate, there is no need to define new frame layout, just define args, like rpc
 - **small overhead**  
   normally, for each kv, there is only two bytes overhead, while json has 5 or more, and hard to parse; it's good for iot or rpc protocol
 - **light weight**  
