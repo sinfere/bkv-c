@@ -37,7 +37,7 @@ buffer* kv_pack(kv* t);
 #define KV_UNPACK_RESULT_CODE_EMPTY_BUF             1
 #define KV_UNPACK_RESULT_CODE_DECODE_LENGTH_FAIL    -1
 #define KV_UNPACK_RESULT_CODE_BUF_NOT_ENOUGH        -2
-#define KV_UNPACK_RESULT_CODE_WRONG_KEY_SIZE        -3
+#define KV_UNPACK_RESULT_CODE_WRONG_KEY_LENGTH      -3
 
 typedef struct {
     int code;

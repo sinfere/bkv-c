@@ -181,7 +181,7 @@ kv_unpack_result* kv_unpack(u_int8_t* value, size_t size) {
     }
 
     decode_length_result * dlr = decode_length(value, size);
-    if (dlr->code != 0) {
+    if (dlr->code != 0 || dlr->length == 0) {
         // decode length fail
         r->code = KV_UNPACK_RESULT_CODE_DECODE_LENGTH_FAIL;
         return r;
@@ -200,29 +200,29 @@ kv_unpack_result* kv_unpack(u_int8_t* value, size_t size) {
 
     int is_string_key = 0;
 
-    u_int8_t key_size_byte = *payload;
-    u_int8_t key_size = key_size_byte & 0x7F;
-    if ((key_size_byte & 0x80) != 0) {
+    u_int8_t key_length_byte = *payload;
+    u_int8_t key_length = key_length_byte & 0x7F;
+    if ((key_length_byte & 0x80) != 0) {
         is_string_key = 1;
     }
 
-    int value_size = payload_length - 1 - key_size;
-    if (value_size < 0) {
+    int value_length = payload_length - 1 - key_length;
+    if (value_length < 0) {
         // wrong key size
-        r->code = KV_UNPACK_RESULT_CODE_WRONG_KEY_SIZE;
+        r->code = KV_UNPACK_RESULT_CODE_WRONG_KEY_LENGTH;
         return r;
     }
 
-    u_int8_t* key_buf = malloc(key_size * sizeof(u_int8_t));
-    memcpy(key_buf, payload + 1, key_size);
+    u_int8_t* key_buf = malloc(key_length * sizeof(u_int8_t));
+    memcpy(key_buf, payload + 1, key_length);
 
-    u_int8_t* value_buf = malloc(value_size * sizeof(u_int8_t));
-    memcpy(value_buf, payload + 1 + key_size, value_size);
+    u_int8_t* value_buf = malloc(value_length * sizeof(u_int8_t));
+    memcpy(value_buf, payload + 1 + key_length, value_length);
 
     kv* t = malloc(sizeof(kv));
     t->is_string_key = is_string_key;
-    t->key = buffer_new(key_buf, key_size);
-    t->value = buffer_new(value_buf, value_size);
+    t->key = buffer_new(key_buf, key_length);
+    t->value = buffer_new(value_buf, value_length);
 
     r->kv = t;
     r->size = payload_length + dlr->length_byte_size;
@@ -297,14 +297,14 @@ void bkv_add(bkv* b, kv* t) {
     b->size += 1; 
 } 
 
-void bkv_add_by_number_key(bkv* b, u_int64_t key, u_int8_t* value, size_t value_size) {
-    kv* t = kv_new_from_number_key(key, value, value_size);
+void bkv_add_by_number_key(bkv* b, u_int64_t key, u_int8_t* value, size_t value_length) {
+    kv* t = kv_new_from_number_key(key, value, value_length);
     bkv_add(b, t);
     kv_free(t);
 }
 
-void bkv_add_by_string_key(bkv* b, char* key, u_int8_t* value, size_t value_size) {
-    kv* t = kv_new_from_string_key(key, value, value_size);
+void bkv_add_by_string_key(bkv* b, char* key, u_int8_t* value, size_t value_length) {
+    kv* t = kv_new_from_string_key(key, value, value_length);
     bkv_add(b, t);
     kv_free(t);
 }
