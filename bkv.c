@@ -372,7 +372,7 @@ bkv_unpack_result* bkv_unpack(u_int8_t* buf, size_t buf_size) {
 void bkv_free(bkv* b) {
     int i;
 
-    for (int i = 0; i < b->size; i++) {
+    for (i = 0; i < b->size; i++) {
         kv* pt = *(b->kvs + i);
         kv_free(pt);
     }
@@ -454,7 +454,7 @@ char* bkv_get_string_value_from_string_key(bkv* b, char* key) {
 
 
 void dump_buffer(char* name, buffer* b) {
-    int i;
+    int i, j;
 
     printf("%-5s[%ld]: ", name, b->size);
     for (i = 0; i < b->size; i++) {
@@ -466,7 +466,7 @@ void dump_buffer(char* name, buffer* b) {
         u_int8_t first_byte = *(b->buf);
         if (0x20 <= first_byte && first_byte <= 0x7E) {
             printf(" (s: ");
-            for (int j = 0; j < b->size; j++) {
+            for (j = 0; j < b->size; j++) {
                 printf("%c", *(b->buf + j));
             }
             printf(")");
@@ -496,7 +496,7 @@ void dump_kv(kv* t) {
 
 void dump_bkv(bkv* b) {
     int i;
-    
+
     for (i = 0; i < b->size; i++) {
         kv* t = *(b->kvs + i);
         dump_kv(t);
