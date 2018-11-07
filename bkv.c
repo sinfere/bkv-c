@@ -1,44 +1,6 @@
 #include "bkv.h"
 #include <inttypes.h>
 
-void reverse(u_int8_t * bs, size_t size) {
-    int i, j;
-    for (i = 0, j = size - 1; i < j; i++, j--) {
-        u_int8_t tmp = *(bs + i);
-        *(bs + i) = *(bs + j);
-        *(bs + j) = tmp;
-    }
-}
-
-buffer* encode_number(u_int64_t number) {
-    u_int8_t nb[16]; 
-    int i = 0;
-    while (number > 0) {
-        nb[i] = number & 0xFF;
-        number >>= 8;
-        i++;
-    }
-
-    reverse(nb, i);
-
-    return buffer_new(nb, i);
-}
-
-u_int64_t decode_number(u_int8_t * buf, size_t buf_size) {
-    int i;
-
-    if (buf_size > 8) {
-        buf_size = 8;
-    }
-    u_int64_t n = 0;
-    for (i = 0; i < buf_size; i++) {
-        n <<= 8;
-        n |= buf[i];
-    }
-
-    return n;
-}
-
 buffer* encode_length(u_int64_t length) {
     u_int8_t nb[16]; 
     int i = 0;

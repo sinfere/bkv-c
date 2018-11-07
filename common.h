@@ -33,11 +33,23 @@ typedef struct {
 } buffer;
 
 buffer* buffer_new(u_int8_t* buf, size_t size);
+buffer* buffer_new_from_number(u_int64_t n);
+buffer* buffer_new_from_string(char* s);
 buffer* buffer_alloc(size_t capacity);
 buffer* buffer_clone(buffer* b);
 int buffer_grow(buffer* b, size_t capacity);
 int buffer_append(buffer* b, u_int8_t* buf, size_t size);
 void buffer_free(buffer* b);
+
+void reverse(u_int8_t * bs, size_t size);
+buffer* encode_number(u_int64_t number);
+u_int64_t decode_number(u_int8_t * buf, size_t buf_size);
+
+
+
+
+
+
 
 #define USE_TTY 1
 #define TIME_FORMAT "%F %T"

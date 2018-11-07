@@ -6,9 +6,6 @@
 #if !defined(BKV_H)
 #define BKV_H
 
-buffer* encode_number(u_int64_t number);
-u_int64_t decode_number(u_int8_t * buf, size_t buf_size);
-
 buffer* encode_length(u_int64_t length);
 typedef struct {
     int code;
