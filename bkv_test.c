@@ -18,7 +18,7 @@ void test_size() {
 void test_kv_encode_decode_number() {
     printf("[kv-encode-decode-number-key]\n");
     u_int8_t value[2] = {2, 3};
-    kv* t = kv_new_from_number_key(2086, &value[0], 2);
+    kv* t = kv_new_from_number_key(2086, buffer_new(value, 2));
 
     buffer* b = kv_pack(t);
     dump_buffer("pack result:", b);
@@ -36,7 +36,7 @@ void test_kv_encode_decode_number() {
 void test_kv_encode_decode_string() {
     printf("[kv-encode-decode-string-key]\n");
     u_int8_t value[2] = {2, 3};
-    kv* t = kv_new_from_string_key("protocol", &value[0], 2);
+    kv* t = kv_new_from_string_key("protocol", buffer_new(value, 2));
 
     buffer* b = kv_pack(t);
     dump_buffer("pack result:", b);
@@ -56,11 +56,11 @@ void test_bkv_encode_decode() {
     bkv* tb = bkv_new();
 
     u_int8_t value[2] = {2, 3};
-    bkv_add_by_number_key(tb, 1, &value[0], 2);
-    bkv_add_by_string_key(tb, "version", &value[0], 2);
+    bkv_add_by_number_key(tb, 1, buffer_new(value, 2));
+    bkv_add_by_string_key(tb, "version", buffer_new(value, 2));
 
     char* test = "hello";
-    bkv_add_by_string_key(tb, "test", (u_int8_t *)test, strlen(test));
+    bkv_add_by_string_key(tb, "test", buffer_new((u_int8_t*)test, strlen(test)));
 
     buffer* b = bkv_pack(tb);
 
@@ -101,7 +101,7 @@ void test_bench_bkv_encode_decode() {
     int i = 1000000;
     while (i-- >= 0) {
         test_bkv_encode_decode();
-    }    
+    }   
 }
 
 void test_encode_decode_length() {

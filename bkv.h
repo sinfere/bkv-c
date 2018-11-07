@@ -29,8 +29,8 @@ typedef struct {
     buffer* value;
 } kv;
 
-kv* kv_new_from_number_key(u_int64_t key, u_int8_t* value, size_t value_size);
-kv* kv_new_from_string_key(char* key, u_int8_t* value, size_t value_size);
+kv* kv_new_from_number_key(u_int64_t k, buffer* v);
+kv* kv_new_from_string_key(char* k, buffer* v);
 
 buffer* kv_pack(kv* t);
 
@@ -68,8 +68,8 @@ typedef struct {
 
 bkv* bkv_new();
 void bkv_add(bkv* b, kv* t);
-void bkv_add_by_number_key(bkv* b, u_int64_t key, u_int8_t* value, size_t value_size);
-void bkv_add_by_string_key(bkv* b, char* key, u_int8_t* value, size_t value_size);
+void bkv_add_by_number_key(bkv* b, u_int64_t k, buffer* v);
+void bkv_add_by_string_key(bkv* b, char* k, buffer* v);
 
 buffer* bkv_pack(bkv* b);
 

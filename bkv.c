@@ -114,19 +114,19 @@ decode_length_result* decode_length(u_int8_t * buf, size_t buf_size) {
     return result;
 }
 
-kv* kv_new_from_number_key(u_int64_t key, u_int8_t* value, size_t size) {
+kv* kv_new_from_number_key(u_int64_t key, buffer* b) {
     kv *t = b_malloc(sizeof(kv));
     t->is_string_key = 0;
     t->key = encode_number(key);
-    t->value = buffer_new(value, size);
+    t->value = b;
     return t;
 }
 
-kv* kv_new_from_string_key(char * key, u_int8_t* value, size_t size) {
+kv* kv_new_from_string_key(char * key, buffer* b) {
     kv *t = b_malloc(sizeof(kv));
     t->is_string_key = 1;
     t->key = buffer_new((u_int8_t *)key, strlen(key));
-    t->value = buffer_new(value, size);
+    t->value = b;
     return t;    
 }
 
@@ -144,9 +144,9 @@ buffer* kv_pack(kv * t) {
     size_t length_size = length_encoded_buffer->size;
     size_t buf_size = length_size + payload_length;
 
-    u_int8_t keyLenghtByte = t->key->size & 0x7F;
+    u_int8_t key_lenght_byte = t->key->size & 0x7F;
     if (t->is_string_key) {
-        keyLenghtByte |= 0x80;
+        key_lenght_byte |= 0x80;
     }
     
     u_int8_t* buf = b_malloc(buf_size * sizeof(u_int8_t));
@@ -155,7 +155,7 @@ buffer* kv_pack(kv * t) {
     memcpy(buf, length_encoded_buffer->buf, length_encoded_buffer->size);
 
     // key length byte
-    *(buf + length_size) = keyLenghtByte;
+    *(buf + length_size) = key_lenght_byte;
 
     // key
     memcpy(buf + length_size + 1, t->key->buf, t->key->size);
@@ -301,14 +301,14 @@ void bkv_add(bkv* b, kv* t) {
     b->size += 1; 
 } 
 
-void bkv_add_by_number_key(bkv* b, u_int64_t key, u_int8_t* value, size_t value_length) {
-    kv* t = kv_new_from_number_key(key, value, value_length);
+void bkv_add_by_number_key(bkv* b, u_int64_t k, buffer* v) {
+    kv* t = kv_new_from_number_key(k, v);
     bkv_add(b, t);
     kv_free(t);
 }
 
-void bkv_add_by_string_key(bkv* b, char* key, u_int8_t* value, size_t value_length) {
-    kv* t = kv_new_from_string_key(key, value, value_length);
+void bkv_add_by_string_key(bkv* b, char* k, buffer* v) {
+    kv* t = kv_new_from_string_key(k, v);
     bkv_add(b, t);
     kv_free(t);
 }
