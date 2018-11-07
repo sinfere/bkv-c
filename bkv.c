@@ -413,10 +413,16 @@ kv* bkv_get_kv_from_number_key(bkv* b, u_int64_t key) {
 
 u_int64_t bkv_get_number_value_from_string_key(bkv* b, char* key) {
     kv* k = bkv_get_kv_from_string_key(b, key);
+    if (k == NULL) {
+        return 0;
+    }
     return decode_number(k->value->buf, k->value->size);
 }
 char* bkv_get_string_value_from_string_key(bkv* b, char* key) {
     kv* k = bkv_get_kv_from_string_key(b, key);
+    if (k == NULL) {
+        return NULL;
+    }
     
     char* s = malloc((k->value->size + 1) * sizeof(char));
     memset(s, 0, k->value->size + 1);
