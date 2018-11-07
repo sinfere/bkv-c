@@ -114,18 +114,18 @@ decode_length_result* decode_length(u_int8_t * buf, size_t buf_size) {
     return result;
 }
 
-kv* kv_new_from_number_key(u_int64_t key, buffer* b) {
+kv* kv_new_from_number_key(u_int64_t k, buffer* b) {
     kv *t = b_malloc(sizeof(kv));
     t->is_string_key = 0;
-    t->key = encode_number(key);
+    t->key = encode_number(k);
     t->value = b;
     return t;
 }
 
-kv* kv_new_from_string_key(char * key, buffer* b) {
+kv* kv_new_from_string_key(char * k, buffer* b) {
     kv *t = b_malloc(sizeof(kv));
     t->is_string_key = 1;
-    t->key = buffer_new((u_int8_t *)key, strlen(key));
+    t->key = buffer_new((u_int8_t *)k, strlen(k));
     t->value = b;
     return t;    
 }
