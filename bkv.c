@@ -2,7 +2,8 @@
 #include <inttypes.h>
 
 void reverse(u_int8_t * bs, size_t size) {
-    for (int i = 0, j = size - 1; i < j; i++, j--) {
+    int i, j;
+    for (i = 0, j = size - 1; i < j; i++, j--) {
         u_int8_t tmp = *(bs + i);
         *(bs + i) = *(bs + j);
         *(bs + j) = tmp;
@@ -36,11 +37,13 @@ buffer* encode_number(u_int64_t number) {
 }
 
 u_int64_t decode_number(u_int8_t * buf, size_t buf_size) {
+    int i;
+
     if (buf_size > 8) {
         buf_size = 8;
     }
     u_int64_t n = 0;
-    for (int i = 0; i < buf_size; i++) {
+    for (i = 0; i < buf_size; i++) {
         n <<= 8;
         n |= buf[i];
     }
@@ -82,7 +85,8 @@ decode_length_result* decode_length(u_int8_t * buf, size_t buf_size) {
     decode_length_result *result = b_malloc(sizeof(decode_length_result));
 
     int length_byte_size = 0;
-    for (int i = 0; i < buf_size; i++) {
+    int i;
+    for (i = 0; i < buf_size; i++) {
         length_byte_size++;
         if ((*(buf + i) & 0x80) == 0) {
             break;
@@ -98,7 +102,7 @@ decode_length_result* decode_length(u_int8_t * buf, size_t buf_size) {
 
     u_int64_t length = 0;
 
-    for (int i = 0; i < length_byte_size; i++) {
+    for (i = 0; i < length_byte_size; i++) {
         length <<= 7;
         length |= *(buf + i) & 0x7F;
     }
@@ -314,9 +318,11 @@ buffer* bkv_pack(bkv* b) {
         return buffer_new(NULL, 0);
     }
 
+    int i;
+
     // first buf as base buffer
-    buffer* tb = kv_pack(b->kvs[0]);
-    for (int i = 1; i < b->size; i++) {
+    buffer* tb = kv_pack(b->kvs[0]);    
+    for (i = 1; i < b->size; i++) {
         buffer* pb = kv_pack(b->kvs[i]);
         size_t new_size = tb->size + pb->size;
         u_int8_t *new_buf = b_malloc(new_size * sizeof(u_int8_t));
@@ -364,6 +370,8 @@ bkv_unpack_result* bkv_unpack(u_int8_t* buf, size_t buf_size) {
 }
 
 void bkv_free(bkv* b) {
+    int i;
+
     for (int i = 0; i < b->size; i++) {
         kv* pt = *(b->kvs + i);
         kv_free(pt);
@@ -383,7 +391,9 @@ void bkv_free_unpack_result(bkv_unpack_result *r) {
 }
 
 kv* bkv_get_kv_from_string_key(bkv* b, char* key) {
-    for (int i = 0; i < b->size; i++) {
+    int i;
+
+    for (i = 0; i < b->size; i++) {
         kv* t = *(b->kvs + i);
         if (t->is_string_key != 0) {
             char* t_key = kv_get_string_key(t);
@@ -398,7 +408,9 @@ kv* bkv_get_kv_from_string_key(bkv* b, char* key) {
 }
 
 kv* bkv_get_kv_from_number_key(bkv* b, u_int64_t key) {
-    for (int i = 0; i < b->size; i++) {
+    int i;
+
+    for (i = 0; i < b->size; i++) {
         kv* t = *(b->kvs + i);
         if (t->is_string_key == 0) {
             u_int64_t t_key = kv_get_number_key(t);
@@ -442,8 +454,10 @@ char* bkv_get_string_value_from_string_key(bkv* b, char* key) {
 
 
 void dump_buffer(char* name, buffer* b) {
+    int i;
+
     printf("%-5s[%ld]: ", name, b->size);
-    for (int i = 0; i < b->size; i++) {
+    for (i = 0; i < b->size; i++) {
         printf("%02X", *(b->buf + i));
     }
 
@@ -481,7 +495,9 @@ void dump_kv(kv* t) {
 }
 
 void dump_bkv(bkv* b) {
-    for (int i = 0; i < b->size; i++) {
+    int i;
+    
+    for (i = 0; i < b->size; i++) {
         kv* t = *(b->kvs + i);
         dump_kv(t);
     }  
