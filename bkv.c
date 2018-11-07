@@ -10,7 +10,7 @@ void reverse(u_int8_t * bs, size_t size) {
 }
 
 buffer* encode_number(u_int64_t number) {
-    buffer *b = malloc(sizeof(buffer));
+    buffer *b = b_malloc(sizeof(buffer));
 
     int buf_size = 0;
     u_int64_t number_for_count = number;
@@ -19,7 +19,7 @@ buffer* encode_number(u_int64_t number) {
         number_for_count >>= 8;
     }
 
-    u_int8_t *buf = (u_int8_t *) malloc(buf_size * sizeof(u_int8_t));
+    u_int8_t *buf = (u_int8_t *) b_malloc(buf_size * sizeof(u_int8_t));
     int i = 0;
     while (number > 0) {
         *(buf + i) = (u_int8_t)(number & 0xFF);
@@ -49,7 +49,7 @@ u_int64_t decode_number(u_int8_t * buf, size_t buf_size) {
 }
 
 buffer* encode_length(u_int64_t length) {
-    buffer *b = malloc(sizeof(buffer));
+    buffer *b = b_malloc(sizeof(buffer));
 
     int buf_size = 0;
     u_int64_t length_for_count = length;
@@ -58,7 +58,7 @@ buffer* encode_length(u_int64_t length) {
         length_for_count >>= 7;
     }
 
-    u_int8_t *buf = (u_int8_t *) malloc(buf_size * sizeof(u_int8_t));
+    u_int8_t *buf = (u_int8_t *) b_malloc(buf_size * sizeof(u_int8_t));
     int i = 0;
     while (length > 0) {
         *(buf + i) = (u_int8_t)((length & 0x7F) | 0x80);
@@ -79,7 +79,7 @@ buffer* encode_length(u_int64_t length) {
 }
 
 decode_length_result* decode_length(u_int8_t * buf, size_t buf_size) {
-    decode_length_result *result = malloc(sizeof(decode_length_result));
+    decode_length_result *result = b_malloc(sizeof(decode_length_result));
 
     int length_byte_size = 0;
     for (int i = 0; i < buf_size; i++) {
@@ -111,7 +111,7 @@ decode_length_result* decode_length(u_int8_t * buf, size_t buf_size) {
 }
 
 kv* kv_new_from_number_key(u_int64_t key, u_int8_t* value, size_t size) {
-    kv *t = malloc(sizeof(kv));
+    kv *t = b_malloc(sizeof(kv));
     t->is_string_key = 0;
     t->key = encode_number(key);
     t->value = buffer_new(value, size);
@@ -119,7 +119,7 @@ kv* kv_new_from_number_key(u_int64_t key, u_int8_t* value, size_t size) {
 }
 
 kv* kv_new_from_string_key(char * key, u_int8_t* value, size_t size) {
-    kv *t = malloc(sizeof(kv));
+    kv *t = b_malloc(sizeof(kv));
     t->is_string_key = 1;
     t->key = buffer_new((u_int8_t *)key, strlen(key));
     t->value = buffer_new(value, size);
@@ -127,7 +127,7 @@ kv* kv_new_from_string_key(char * key, u_int8_t* value, size_t size) {
 }
 
 kv* kv_clone(kv* t) {
-    kv *nt = malloc(sizeof(kv));
+    kv *nt = b_malloc(sizeof(kv));
     nt->is_string_key = t->is_string_key;
     nt->key = buffer_clone(t->key);
     nt->value = buffer_clone(t->value);
@@ -145,7 +145,7 @@ buffer* kv_pack(kv * t) {
         keyLenghtByte |= 0x80;
     }
     
-    u_int8_t* buf = malloc(buf_size * sizeof(u_int8_t));
+    u_int8_t* buf = b_malloc(buf_size * sizeof(u_int8_t));
 
     // variable length part
     memcpy(buf, length_encoded_buffer->buf, length_encoded_buffer->size);
@@ -162,7 +162,7 @@ buffer* kv_pack(kv * t) {
     buffer *b = buffer_new(buf, buf_size);
 
     kv_free_buffer(length_encoded_buffer);
-    free(buf);
+    b_free(buf);
 
     return b;
 }
@@ -170,7 +170,7 @@ buffer* kv_pack(kv * t) {
 kv_unpack_result* kv_unpack(u_int8_t* value, size_t size) {
     // dump_buffer("debug unpack", buffer_new(value, size));
 
-    kv_unpack_result *r = malloc(sizeof(kv_unpack_result));
+    kv_unpack_result *r = b_malloc(sizeof(kv_unpack_result));
     r->code = 0;
     r->kv = NULL;
     r->size = 0;
@@ -213,13 +213,13 @@ kv_unpack_result* kv_unpack(u_int8_t* value, size_t size) {
         return r;
     }
 
-    u_int8_t* key_buf = malloc(key_length * sizeof(u_int8_t));
+    u_int8_t* key_buf = b_malloc(key_length * sizeof(u_int8_t));
     memcpy(key_buf, payload + 1, key_length);
 
-    u_int8_t* value_buf = malloc(value_length * sizeof(u_int8_t));
+    u_int8_t* value_buf = b_malloc(value_length * sizeof(u_int8_t));
     memcpy(value_buf, payload + 1 + key_length, value_length);
 
-    kv* t = malloc(sizeof(kv));
+    kv* t = b_malloc(sizeof(kv));
     t->is_string_key = is_string_key;
     t->key = buffer_new(key_buf, key_length);
     t->value = buffer_new(value_buf, value_length);
@@ -227,9 +227,9 @@ kv_unpack_result* kv_unpack(u_int8_t* value, size_t size) {
     r->kv = t;
     r->size = payload_length + dlr->length_byte_size;
 
-    free(key_buf);
-    free(value_buf);
-    free(dlr);
+    b_free(key_buf);
+    b_free(value_buf);
+    b_free(dlr);
 
     return r;
 }
@@ -237,15 +237,15 @@ kv_unpack_result* kv_unpack(u_int8_t* value, size_t size) {
 void kv_free(kv* t) {
     kv_free_buffer(t->key);
     kv_free_buffer(t->value);
-    free(t);  
+    b_free(t);  
 }
 
 void kv_free_buffer(buffer* b) {
     if (b->buf != NULL) {
-        free(b->buf);
+        b_free(b->buf);
     }
     
-    free(b);
+    b_free(b);
 }
 
 void kv_free_unpack_result(kv_unpack_result *r) {
@@ -253,11 +253,11 @@ void kv_free_unpack_result(kv_unpack_result *r) {
         kv_free(r->kv);
     }
     
-    free(r);    
+    b_free(r);    
 }
 
 char* kv_get_string_key(kv* t) {
-    char* s = malloc((t->key->size + 1) * sizeof(char));
+    char* s = b_malloc((t->key->size + 1) * sizeof(char));
     memset(s, 0, t->key->size + 1);
     memcpy(s, t->key->buf, t->key->size);
     return s;
@@ -274,7 +274,7 @@ u_int64_t kv_get_number_key(kv* t) {
 
 
 bkv* bkv_new() {
-    bkv *b = malloc(sizeof(bkv));
+    bkv *b = b_malloc(sizeof(bkv));
     b->kvs = NULL;
     b->size = 0;
     return b;       
@@ -283,14 +283,14 @@ bkv* bkv_new() {
 void bkv_add(bkv* b, kv* t) {
     t = kv_clone(t);
     size_t kv_size = sizeof(kv*);
-    kv** p = malloc(kv_size * (b->size + 1));
+    kv** p = b_malloc(kv_size * (b->size + 1));
     // for (int i = 0; i < b->size; i++) {
     //     p[i] = b->kvs[i];
     // }
     if (b->size != 0) {
         memcpy(p, b->kvs, kv_size * b->size);
     }
-    free(b->kvs);
+    b_free(b->kvs);
     // p[b->size] = t;
     memcpy(p + b->size, &t, kv_size);
     b->kvs = p;
@@ -319,11 +319,11 @@ buffer* bkv_pack(bkv* b) {
     for (int i = 1; i < b->size; i++) {
         buffer* pb = kv_pack(b->kvs[i]);
         size_t new_size = tb->size + pb->size;
-        u_int8_t *new_buf = malloc(new_size * sizeof(u_int8_t));
+        u_int8_t *new_buf = b_malloc(new_size * sizeof(u_int8_t));
         memcpy(new_buf, tb->buf, tb->size);
         memcpy(new_buf + tb->size, pb->buf, pb->size);
         
-        free(tb->buf);
+        b_free(tb->buf);
         tb->buf = new_buf;
         tb->size = new_size;
         kv_free_buffer(pb);
@@ -333,7 +333,7 @@ buffer* bkv_pack(bkv* b) {
 }
 
 bkv_unpack_result* bkv_unpack(u_int8_t* buf, size_t buf_size) {
-    bkv_unpack_result *br = malloc(sizeof(bkv_unpack_result));
+    bkv_unpack_result *br = b_malloc(sizeof(bkv_unpack_result));
     memset(br, 0, sizeof(bkv_unpack_result));
     bkv* b = bkv_new();
     br->bkv = b;
@@ -369,17 +369,17 @@ void bkv_free(bkv* b) {
         kv_free(pt);
     }
     if (b->kvs != NULL) {
-        free(b->kvs);
+        b_free(b->kvs);
     }
     
-    free(b);
+    b_free(b);
 }
 
 void bkv_free_unpack_result(bkv_unpack_result *r) {
     if (r->bkv != NULL) {
         bkv_free(r->bkv);
     }
-    free(r);        
+    b_free(r);        
 }
 
 kv* bkv_get_kv_from_string_key(bkv* b, char* key) {
@@ -388,7 +388,7 @@ kv* bkv_get_kv_from_string_key(bkv* b, char* key) {
         if (t->is_string_key != 0) {
             char* t_key = kv_get_string_key(t);
             if (strcmp(t_key, key) == 0) {
-                free(t_key);
+                b_free(t_key);
                 return t;
             }
         }
@@ -424,7 +424,7 @@ char* bkv_get_string_value_from_string_key(bkv* b, char* key) {
         return NULL;
     }
     
-    char* s = malloc((k->value->size + 1) * sizeof(char));
+    char* s = b_malloc((k->value->size + 1) * sizeof(char));
     memset(s, 0, k->value->size + 1);
     memcpy(s, k->value->buf, k->value->size);
     return s;  
@@ -472,7 +472,7 @@ void dump_kv(kv* t) {
     if (t->is_string_key) {
         char* string_key = kv_get_string_key(t);
         printf("key[s]:%16s -> ", string_key);
-        free(string_key);
+        b_free(string_key);
     } else {
         u_int64_t number_key = kv_get_number_key(t);
         printf("key[n]:%16"PRIu64" -> ", number_key);

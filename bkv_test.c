@@ -68,9 +68,8 @@ void test_bkv_encode_decode() {
     printf("\n");
 
     bkv_unpack_result* r = bkv_unpack(b->buf, b->size);
-    if (r->code == 0) {
-        char* test = bkv_get_string_value_from_string_key(r->bkv, "test");
-        u_int64_t version = bkv_get_number_value_from_string_key(r->bkv, "version");
+    if (r->code != 0) {
+        LOGE("unpack fail");
     }
     
     printf("%-30s %d \n", "unpack result code:", r->code);
@@ -115,6 +114,10 @@ void test_encode_decode_length() {
 
 
 int main() {
+#ifdef USE_TLSF
+    b_init();
+#endif
+
     printf("begin: %d\n\n",(int)time(NULL));
 
     // test_ml_kv_encode_decode();
@@ -122,8 +125,8 @@ int main() {
     // test_kv_encode_decode_string();
 
     // test_bench_bkv_encode_decode();
-    // test_ml_bkv_encode_decode();
-    test_bkv_encode_decode();
+    test_ml_bkv_encode_decode();
+    // test_bkv_encode_decode();
 
     // test_encode_decode_length();
 

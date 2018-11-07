@@ -6,6 +6,24 @@
 #if !defined(COMMON_H)
 #define COMMON_H
 
+#define USE_TLSF 1
+
+#ifdef USE_TLSF
+    #include "tlsf.h"
+
+    #define TLSF_POOL_SIZE 3 * 1024
+    static char b_mem_pool[TLSF_POOL_SIZE];
+#endif
+
+
+void b_init();
+void* b_malloc(size_t size);
+void* b_realloc(void* p, size_t size);
+void b_free(void* p);
+
+
+
+
 #define BUFFER_DEFAULT_SIZE 64
 
 typedef struct {

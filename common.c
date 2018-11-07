@@ -1,10 +1,40 @@
 #include "common.h"
 
+void b_init() {
+#ifdef USE_TLSF
+    init_memory_pool(TLSF_POOL_SIZE, b_mem_pool);
+#endif
+}
+
+void* b_malloc(size_t size) {
+#ifdef USE_TLSF
+    return tlsf_malloc(size);
+#else
+    return malloc(size);
+#endif
+}
+
+void* b_realloc(void* p, size_t size) {
+#ifdef USE_TLSF
+    return tlsf_realloc(p, size);
+#else
+    return realloc(p, size);
+#endif
+}
+
+void b_free(void* p) {
+#ifdef USE_TLSF
+    tlsf_free(p);
+#else
+    free(p);
+#endif
+}
+
 buffer* buffer_new(u_int8_t* buf, size_t size) { 
-    u_int8_t *new_buf = malloc(size * sizeof(u_int8_t));
+    u_int8_t *new_buf = b_malloc(size * sizeof(u_int8_t));
     memcpy(new_buf, buf, size);
 
-    buffer *b = malloc(sizeof(buffer));
+    buffer *b = b_malloc(sizeof(buffer));
     b->buf = new_buf;
     b->size = size;
     b->capacity = size;
@@ -12,10 +42,10 @@ buffer* buffer_new(u_int8_t* buf, size_t size) {
 }
 
 buffer* buffer_alloc(size_t capacity) {
-    u_int8_t *new_buf = malloc(capacity * sizeof(u_int8_t));
+    u_int8_t *new_buf = b_malloc(capacity * sizeof(u_int8_t));
     memset(new_buf, 0, capacity * sizeof(u_int8_t));
 
-    buffer *b = malloc(sizeof(buffer));
+    buffer *b = b_malloc(sizeof(buffer));
     b->buf = new_buf;
     b->size = 0;
     b->capacity = capacity;
@@ -32,7 +62,7 @@ int buffer_grow(buffer* b, size_t capacity) {
     }
 
     // if (b->size == 0) {
-    //     u_int8_t *new_buf = malloc(capacity * sizeof(u_int8_t));
+    //     u_int8_t *new_buf = b_malloc(capacity * sizeof(u_int8_t));
     //     memset(new_buf, 0, capacity * sizeof(u_int8_t));
     //     b->buf = new_buf;
     //     b->capacity = capacity;
@@ -70,8 +100,8 @@ int buffer_append(buffer* b, u_int8_t* buf, size_t size) {
 
 void buffer_free(buffer* b) {
     if (b->buf != NULL) {
-        free(b->buf);
+        b_free(b->buf);
     }
     
-    free(b);
+    b_free(b);
 }
