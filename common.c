@@ -31,10 +31,10 @@ void b_free(void* p) {
 }
 
 buffer* buffer_new(u_int8_t* buf, size_t size) { 
-    u_int8_t *new_buf = b_malloc(size * sizeof(u_int8_t));
+    u_int8_t* new_buf = b_malloc(size * sizeof(u_int8_t));
     memcpy(new_buf, buf, size);
 
-    buffer *b = b_malloc(sizeof(buffer));
+    buffer* b = b_malloc(sizeof(buffer));
     b->buf = new_buf;
     b->size = size;
     b->capacity = size;
@@ -46,14 +46,14 @@ buffer* buffer_new_from_number(u_int64_t n) {
 }
 
 buffer* buffer_new_from_string(char* s) { 
-    return buffer_new((u_int8_t *)s, strlen(s));
+    return buffer_new((u_int8_t*)s, strlen(s));
 }
 
 buffer* buffer_alloc(size_t capacity) {
-    u_int8_t *new_buf = b_malloc(capacity * sizeof(u_int8_t));
+    u_int8_t* new_buf = b_malloc(capacity * sizeof(u_int8_t));
     memset(new_buf, 0, capacity * sizeof(u_int8_t));
 
-    buffer *b = b_malloc(sizeof(buffer));
+    buffer* b = b_malloc(sizeof(buffer));
     b->buf = new_buf;
     b->size = 0;
     b->capacity = capacity;
@@ -70,7 +70,7 @@ int buffer_grow(buffer* b, size_t capacity) {
     }
 
     // if (b->size == 0) {
-    //     u_int8_t *new_buf = b_malloc(capacity * sizeof(u_int8_t));
+    //     u_int8_t* new_buf = b_malloc(capacity * sizeof(u_int8_t));
     //     memset(new_buf, 0, capacity * sizeof(u_int8_t));
     //     b->buf = new_buf;
     //     b->capacity = capacity;
@@ -114,7 +114,7 @@ void buffer_free(buffer* b) {
     b_free(b);
 }
 
-void reverse(u_int8_t * bs, size_t size) {
+void reverse(u_int8_t* bs, size_t size) {
     int i, j;
     for (i = 0, j = size - 1; i < j; i++, j--) {
         u_int8_t tmp = *(bs + i);
@@ -137,7 +137,7 @@ buffer* encode_number(u_int64_t number) {
     return buffer_new(nb, i);
 }
 
-u_int64_t decode_number(u_int8_t * buf, size_t buf_size) {
+u_int64_t decode_number(u_int8_t* buf, size_t buf_size) {
     int i;
 
     if (buf_size > 8) {

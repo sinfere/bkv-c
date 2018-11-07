@@ -12,7 +12,7 @@ typedef struct {
     u_int64_t length;
     u_int64_t length_byte_size;
 } decode_length_result;
-decode_length_result* decode_length(u_int8_t * buf, size_t buf_size);
+decode_length_result* decode_length(u_int8_t* buf, size_t buf_size);
 
 
 #define KV_VALUE_TYPE_BKV      0

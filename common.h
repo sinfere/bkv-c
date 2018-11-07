@@ -41,9 +41,9 @@ int buffer_grow(buffer* b, size_t capacity);
 int buffer_append(buffer* b, u_int8_t* buf, size_t size);
 void buffer_free(buffer* b);
 
-void reverse(u_int8_t * bs, size_t size);
+void reverse(u_int8_t* bs, size_t size);
 buffer* encode_number(u_int64_t number);
-u_int64_t decode_number(u_int8_t * buf, size_t buf_size);
+u_int64_t decode_number(u_int8_t* buf, size_t buf_size);
 
 
 

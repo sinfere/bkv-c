@@ -32,11 +32,10 @@ Pack:
 bkv* tb = bkv_new();
 
 u_int8_t value[2] = {2, 3};
-bkv_add_by_number_key(tb, 1, &value[0], 2);
-bkv_add_by_string_key(tb, "version", &value[0], 2);
+bkv_add_by_number_key(tb, 1, buffer_new(value, 2));
+bkv_add_by_string_key(tb, "version", buffer_new_from_number(515));
 
-char* test = "hello";
-bkv_add_by_string_key(tb, "test", (u_int8_t *)test, strlen(test));
+bkv_add_by_string_key(tb, "test", buffer_new_from_string("hello"));
 
 buffer* b = bkv_pack(tb);
 ```

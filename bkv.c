@@ -16,7 +16,7 @@ buffer* encode_length(u_int64_t length) {
     return buffer_new(nb, i);
 }
 
-decode_length_result* decode_length(u_int8_t * buf, size_t buf_size) {
+decode_length_result* decode_length(u_int8_t* buf, size_t buf_size) {
     decode_length_result *result = b_malloc(sizeof(decode_length_result));
 
     int length_byte_size = 0;
@@ -60,7 +60,7 @@ kv* kv_new_from_number_key(u_int64_t k, buffer* v) {
 kv* kv_new_from_string_key(char * k, buffer* v) {
     kv *t = b_malloc(sizeof(kv));
     t->is_string_key = 1;
-    t->key = buffer_new((u_int8_t *)k, strlen(k));
+    t->key = buffer_new((u_int8_t*)k, strlen(k));
     t->value = v;
     return t;    
 }
@@ -98,7 +98,7 @@ buffer* kv_pack(kv * t) {
     // value
     memcpy(buf + length_size + 1 + t->key->size, t->value->buf, t->value->size);
 
-    buffer *b = buffer_new(buf, buf_size);
+    buffer* b = buffer_new(buf, buf_size);
 
     kv_free_buffer(length_encoded_buffer);
     b_free(buf);
@@ -260,7 +260,7 @@ buffer* bkv_pack(bkv* b) {
     for (i = 1; i < b->size; i++) {
         buffer* pb = kv_pack(b->kvs[i]);
         size_t new_size = tb->size + pb->size;
-        u_int8_t *new_buf = b_malloc(new_size * sizeof(u_int8_t));
+        u_int8_t* new_buf = b_malloc(new_size * sizeof(u_int8_t));
         memcpy(new_buf, tb->buf, tb->size);
         memcpy(new_buf + tb->size, pb->buf, pb->size);
         
