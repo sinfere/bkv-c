@@ -11,29 +11,17 @@ void reverse(u_int8_t * bs, size_t size) {
 }
 
 buffer* encode_number(u_int64_t number) {
-    buffer *b = b_malloc(sizeof(buffer));
-
-    int buf_size = 0;
-    u_int64_t number_for_count = number;
-    while (number_for_count > 0) {
-        buf_size++;
-        number_for_count >>= 8;
-    }
-
-    u_int8_t *buf = (u_int8_t *) b_malloc(buf_size * sizeof(u_int8_t));
+    u_int8_t nb[16]; 
     int i = 0;
     while (number > 0) {
-        *(buf + i) = (u_int8_t)(number & 0xFF);
+        nb[i] = number & 0xFF;
         number >>= 8;
         i++;
     }
 
-    reverse(buf, buf_size);
+    reverse(nb, i);
 
-    b->buf = buf;
-    b->size = buf_size;
-
-    return b;
+    return buffer_new(nb, i);
 }
 
 u_int64_t decode_number(u_int8_t * buf, size_t buf_size) {
@@ -52,33 +40,18 @@ u_int64_t decode_number(u_int8_t * buf, size_t buf_size) {
 }
 
 buffer* encode_length(u_int64_t length) {
-    buffer *b = b_malloc(sizeof(buffer));
-
-    int buf_size = 0;
-    u_int64_t length_for_count = length;
-    while (length_for_count > 0) {
-        buf_size++;
-        length_for_count >>= 7;
-    }
-
-    u_int8_t *buf = (u_int8_t *) b_malloc(buf_size * sizeof(u_int8_t));
+    u_int8_t nb[16]; 
     int i = 0;
     while (length > 0) {
-        *(buf + i) = (u_int8_t)((length & 0x7F) | 0x80);
+        nb[i] = (length & 0x7F) | 0x80;
         length >>= 7;
         i++;
-    }
+    }    
 
-    reverse(buf, buf_size);
+    reverse(nb, i);
+    nb[i - 1] &= 0x7F;
 
-    u_int8_t last_byte = *(buf + buf_size - 1);
-    last_byte &= 0x7F;
-    *(buf + buf_size - 1) = last_byte;
-
-    b->buf = buf;
-    b->size = buf_size;
-
-    return b;
+    return buffer_new(nb, i);
 }
 
 decode_length_result* decode_length(u_int8_t * buf, size_t buf_size) {
