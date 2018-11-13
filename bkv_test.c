@@ -12,7 +12,9 @@ void test_size() {
     printf("int size: %ld, int* size: %ld \n", sizeof(int), sizeof(int*));
     printf("string %ld \n", sizeof(*string));
     printf("array %ld \n", sizeof(array));
-    printf("pointer %ld \n", sizeof(p));    
+    printf("pointer %ld \n", sizeof(p));  
+
+    printf("buffer type size: %ld %ld \n", sizeof(buffer), sizeof(u_int8_t*));  
 }
 
 void test_kv_encode_decode_number() {
@@ -62,14 +64,18 @@ void test_bkv_encode_decode() {
     bkv_add_by_string_key(tb, "test", buffer_new_from_string("hello"));
 
     buffer* b = bkv_pack(tb);
+    bkv_free(tb);
 
     dump_buffer("pack result:", b);
     printf("\n");
+
+    bs_debug();
 
     bkv_unpack_result* r = bkv_unpack(b->buf, b->size);
     if (r->code != 0) {
         LOGE("unpack fail");
     }
+    kv_free_buffer(b);
     
     printf("%-30s %d \n", "unpack result code:", r->code);
     printf("%-30s %ld \n\n", "unpack kv size:", r->bkv->size);
@@ -77,9 +83,9 @@ void test_bkv_encode_decode() {
     dump_bkv(r->bkv);
     printf("\n");
 
-    bkv_free(tb);
-    kv_free_buffer(b);
     bkv_free_unpack_result(r);
+
+    bs_debug();
 }
 
 void test_bkv_encode_decode_simple() {
@@ -142,9 +148,7 @@ void test_encode_decode_length() {
 
 
 int main() {
-#ifdef USE_TLSF
     b_init();
-#endif
 
     printf("begin: %d\n\n",(int)time(NULL));
 

@@ -1,5 +1,4 @@
 #include "bkv.h"
-#include <inttypes.h>
 
 buffer* encode_length(u_int64_t length) {
     u_int8_t nb[16]; 
@@ -391,7 +390,7 @@ char* bkv_get_string_value_from_string_key(bkv* b, char* key) {
 void dump_buffer(char* name, buffer* b) {
     int i, j;
 
-    printf("%-5s[%ld]: ", name, b->size);
+    printf("%-5s[%d]: ", name, (int)(b->size));
     for (i = 0; i < b->size; i++) {
         printf("%02X", *(b->buf + i));
     }
@@ -424,7 +423,7 @@ void dump_kv(kv* t) {
         b_free(string_key);
     } else {
         u_int64_t number_key = kv_get_number_key(t);
-        printf("key[n]:%16"PRIu64" -> ", number_key);
+        printf("key[n]:%lld -> ", (u_int64_t)number_key);
     }
     dump_buffer("value", t->value);   
 }

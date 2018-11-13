@@ -3,28 +3,26 @@
 void b_init() {
 #ifdef USE_TLSF
     init_memory_pool(TLSF_POOL_SIZE, b_mem_pool);
+#elif USE_SMEM
+    bs_init();   
 #endif
 }
 
 void* b_malloc(size_t size) {
 #ifdef USE_TLSF
     return tlsf_malloc(size);
+#elif USE_SMEM
+    return bs_malloc(size);       
 #else
     return malloc(size);
-#endif
-}
-
-void* b_realloc(void* p, size_t size) {
-#ifdef USE_TLSF
-    return tlsf_realloc(p, size);
-#else
-    return realloc(p, size);
 #endif
 }
 
 void b_free(void* p) {
 #ifdef USE_TLSF
     tlsf_free(p);
+#elif USE_SMEM
+    bs_free(p);      
 #else
     free(p);
 #endif
