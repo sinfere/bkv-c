@@ -123,6 +123,11 @@ void reverse(u_int8_t* bs, size_t size) {
 
 buffer* encode_number(u_int64_t number) {
     u_int8_t nb[16]; 
+    if (number == 0) {
+        nb[0] = 0;
+        return buffer_new(nb, 1);
+    }
+
     int i = 0;
     while (number > 0) {
         nb[i] = number & 0xFF;

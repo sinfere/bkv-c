@@ -156,8 +156,8 @@ int main() {
     // test_kv_encode_decode_number();
     // test_kv_encode_decode_string();
 
-    // test_bench_bkv_encode_decode();
-    test_ml_bkv_encode_decode();
+    test_bench_bkv_encode_decode();
+    // test_ml_bkv_encode_decode();
     // test_bkv_encode_decode();
 
     // test_encode_decode_length();
